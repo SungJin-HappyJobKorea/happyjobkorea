@@ -53,7 +53,7 @@ click-able rows
 			}
 		});
 	}
-				
+				  
 				
 		/** 1:1문의 조회 */
 		function fListInf(currentPage) {
