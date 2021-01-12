@@ -7,7 +7,7 @@
 <head>
 <meta charset="UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<title>Chain Maker</title>
+<title>Job Korea</title>
 
 <jsp:include page="/WEB-INF/view/common/common_include.jsp"></jsp:include>
 
