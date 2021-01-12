@@ -30,7 +30,7 @@ click-able rows
 
 		/* onload 이벤트  */
 		$(function(){
-			
+			comcombo("DBCD", "areasel", "all", "53");   // Group Code, Combo Name, Option("all" : 전체     "sel" : 선택 , Select Value )  
 			// 공지사항 조회
 			fListInf();
 			
@@ -153,9 +153,9 @@ click-able rows
 				<li class="contents">
 					<!-- contents -->
 					<h3 class="hidden">contents 영역</h3> <!-- content -->
-	
+	               
 					<div class="content" style="margin-bottom:20px;">
-
+                       
 						<p class="Location">
 							<a href="../dashboard/dashboard.do" class="btn_set home">메인으로</a> <span
 								class="btn_nav bold">메인</span> <a href="../dashboard/dashboard.do"
@@ -187,6 +187,7 @@ click-able rows
 							page="/WEB-INF/view/dashboard/dashboardGed.jsp"></jsp:include>
     					</c:otherwise>
 					</c:choose>
+					     <select id="areasel" name="areasel">	</select>s
 						<p class="conTitle" style="margin-bottom: 1%;">
 							<span>공지 사항</span> <span class="fr"> 
 							</span>

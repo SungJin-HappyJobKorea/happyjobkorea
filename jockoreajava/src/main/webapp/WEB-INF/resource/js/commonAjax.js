@@ -158,3 +158,83 @@ function callAjaxFileUploadSetFormData(url, method, dataType, async, formData, c
 		}
 	});
 }
+
+
+function comcombo(group_code, combo_name, type, selvalue){
+	
+	console.log("comcombo Start !!!!!!!!!!!!!! ");
+	
+	var selectbox = document.getElementById(combo_name);
+
+	var data = {
+			"group_code" : group_code
+		};	
+	
+	$(selectbox).find("option").remove();
+  	
+	//private String dtl_cod;	
+	//private String dtl_cod_nm;
+	
+	$.ajax({ 
+	     type: "POST",  
+	     url: "/commonproc/comcombo.do", 
+	     dataType: "json",  
+	     data : data,
+	     success: function(data)
+	     { 				
+	    	 
+		     var json_obj = $.parseJSON(JSON.stringify(data));//parse JSON 
+		     var jsonstr = json_obj.list;
+		     console.log("jsonstr : " + jsonstr);
+		     
+		     var jsonstr_obj = $.parseJSON(JSON.stringify(jsonstr));//parse JSON 
+		     var listLen = jsonstr_obj.length;
+
+	    	 if(type == "all") {
+	    	    $(selectbox).append("<option value=''>전체</option>");
+	    	 }		     
+		     
+	    	 if(type == "sel") {
+		    	$(selectbox).append("<option value=''>선택</option>");
+		     }
+	    	 console.log(" selvalue : " + selvalue);
+	         for(var i=0; i<listLen; i++)
+	         { 		
+	        	 var eleString = JSON.stringify(jsonstr_obj[i]);
+	        	 var item_obj = $.parseJSON(eleString);//parse JSON
+            
+	        	 if(selvalue != null && selvalue != null && selvalue != "") {
+	        		 if(selvalue == item_obj.dtl_cod) {
+	        			 console.log(" item_obj.dtl_cod : " + item_obj.dtl_cod);
+	        			 
+	        			 $(selectbox).append("<option value='"+ item_obj.dtl_cod + "' selected>" + item_obj.dtl_cod_nm + "</option>");
+	        		 } else {
+	        			 $(selectbox).append("<option value='"+ item_obj.dtl_cod + "'>" + item_obj.dtl_cod_nm + "</option>");
+	        		 }
+	        	 } else {
+	        		 $(selectbox).append("<option value='"+ item_obj.dtl_cod + "'>" + item_obj.dtl_cod_nm + "</option>");
+	        	 }
+	        	 
+	        	 
+	         } 
+	     },
+	     error:function(request,status,error){ alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error); }
+	});  
+};
+
+
+function isEmpty(value){ 
+	if( //$.trim(value) == ""
+		value == ""
+		|| value == null
+		|| value == undefined 
+		|| (value != null && typeof value == "object" 
+				&& !Object.keys(value).length )
+		||(typeof value =="string" && !value.replace(/ /gi, "").length)
+		){	
+		return true; 
+	}else{ 
+		return false; 
+	} 
+};
+
