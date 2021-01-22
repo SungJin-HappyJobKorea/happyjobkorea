@@ -3,6 +3,8 @@ package kr.happyjob.study.login.service;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 import kr.happyjob.study.login.model.LgnInfoModel;
 import kr.happyjob.study.login.model.UsrMnuAtrtModel;
 import kr.happyjob.study.login.model.UsrMnuChildAtrtModel;
@@ -41,7 +43,12 @@ public interface LoginService {
 	/** 사용자 PW 찾기 ID 체크*/
 	public LgnInfoModel registerIdCheck(Map<String, Object> paraMap) throws Exception;
 	
-	/** select 박스 은행 목록*/
-	List<LgnInfoModel> selectBankList();
+	/* 이력서 파일 업로드 */
+	void insertFile(Map<String, Object> paramMap, HttpServletRequest request) throws Exception;
+	
+	void insertResume(Map<String, Object> paramMap);
+	
+/*	*//** select 박스 은행 목록*//*
+	List<LgnInfoModel> selectBankList();*/
 
 }

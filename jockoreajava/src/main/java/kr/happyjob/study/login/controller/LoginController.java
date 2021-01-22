@@ -72,13 +72,12 @@ public class LoginController {
   logger.info("+ Start LoginController.login.do");
   List<ComnCodUtilModel> listOfcDvsCod = ComnCodUtil.getComnCod("OFC_DVS_COD","M");   // 오피스 구분 코드 (M제외)
   Collections.reverse(listOfcDvsCod); // 오피스 구분 역순으로
-  List<ComnCodUtilModel> listCtrCod = ComnCodUtil.getComnCod("CTR_COD");               // 국가 코드
-  List<ComnCodUtilModel> listPnnCtr = ComnCodUtil.getComnCod("PNN_CTR");               // 전화번호 국가
-  List<LgnInfoModel> cdList = loginService.selectBankList();	//select박스 은행 목록
+
+/*  List<LgnInfoModel> cdList = loginService.selectBankList();	//select박스 은행 목록
   request.setAttribute("cdListobj", cdList);					//select박스 은행 목록
-  result.addAttribute("listOfcDvsCod", listOfcDvsCod);   // 오피스 구분 코드
-  result.addAttribute("listCtrCod", listCtrCod);            // 국가 코드
-  result.addAttribute("listPnnCtr", listPnnCtr);            // 전화번호 국가
+*/  result.addAttribute("listOfcDvsCod", listOfcDvsCod);   // 오피스 구분 코드
+  //result.addAttribute("listCtrCod", listCtrCod);            // 국가 코드
+  //result.addAttribute("listPnnCtr", listPnnCtr);            // 전화번호 국가
       logger.info("+ End LoginController.login.do");
 
   return "/login/login";
@@ -138,7 +137,7 @@ public class LoginController {
      session.setAttribute("loginId",lgnInfoModel.getLgn_id());                     //   로그인 ID
      session.setAttribute("userNm",lgnInfoModel.getUsr_nm());                  // 사용자 성명
      session.setAttribute("usrMnuAtrt", listUsrMnuAtrtModel);
-     session.setAttribute("userType", lgnInfoModel.getMem_author());            // 로그린 사용자 권란       A: 관리자       C: 기업회원    D:일반회원
+     session.setAttribute("userType", lgnInfoModel.getMem_author());            // 로그린 사용자 권란       A: 관리자       B: 기업회원    C:일반회원
      session.setAttribute("serverName", request.getServerName());
 	 }
   } else {
@@ -205,6 +204,7 @@ public class LoginController {
 	   
 	   return resultMap;
    }
+   
    
    /*loginID 중복체크*/
    @RequestMapping(value="check_loginID", method=RequestMethod.POST)
@@ -395,6 +395,71 @@ public class LoginController {
 	   return resultMap;
    }
 
+   @RequestMapping("checklist.do")
+   @ResponseBody
+   public Map<String, Object> checklist(Model model, @RequestParam Map<String, Object> paramMap, HttpServletRequest request,
+         HttpServletResponse response, HttpSession session) throws Exception {
+
+      logger.info("+ Start LoginController.checklist.do");
+      logger.info("   - ParamMap : " + paramMap);
    
+      //전문기술 공통코드 
+      List<ComnCodUtilModel> listlistCod = ComnCodUtil.getComnCod("LanguageCD");
+      List<ComnCodUtilModel> weblistCod = ComnCodUtil.getComnCod("webCD");
+      List<ComnCodUtilModel> dblistCod = ComnCodUtil.getComnCod("DBCD");
+      List<ComnCodUtilModel> wslistCod = ComnCodUtil.getComnCod("WSCD");
+      List<ComnCodUtilModel> sklcdlistCod = ComnCodUtil.getComnCod("SKLCD"); //등급
+      List<ComnCodUtilModel> areacdlistCod = ComnCodUtil.getComnCod("areaCD"); //희망근무지역
+      
+      Map<String, Object> resultMap = new HashMap<String, Object>();
+      resultMap.put("listlistCod", listlistCod);
+      resultMap.put("weblistCod", weblistCod);
+      resultMap.put("dblistCod", dblistCod);
+      resultMap.put("wslistCod", wslistCod);
+      resultMap.put("sklcdlistCod", sklcdlistCod);
+      resultMap.put("areacdlistCod", areacdlistCod);
+  
+      logger.info("+ End LoginController.checklist.do");
+      logger.info("확인 weblistCod:"+weblistCod);
+      logger.info("확인 sklcdlistCod:"+sklcdlistCod);
+      return resultMap;
+   }   
+   
+/*	@RequestMapping("saveFileTest.do")
+	@ResponseBody
+	public Map<String, Object> saveFileTest(Model model, @RequestParam Map<String, Object> paramMap, HttpServletRequest request,
+			HttpServletResponse response, HttpSession session) throws Exception {
+		
+		logger.info("+ Start saveFileTest");
+		logger.info("   - paramMap : " + paramMap);
+		
+		String action = (String)paramMap.get("action");
+		String result = "SUCCESS";
+		String resultMsg = "저장 되었습니다.";
+		
+		
+		
+		if ("I".equals(action)) {
+			//CmntBbsService.insertCmntBbs(paramMap, request); // 게시글 신규 저장 
+			logger.info("  action  :  " + action);
+			LoginService.insertFile(paramMap,request);
+		} else if("U".equals(action)) {
+			//CmntBbsService.updateCmntBbs(paramMap, request); // 게시글 수정 저장
+			logger.info("  action  :  " + action);
+			LoginService.updateFile(paramMap,request);
+		} else {
+			logger.info("  action  :  " + action);
+			result = "FALSE";
+			resultMsg = "알수 없는 요청 입니다.";
+		}
+		
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		resultMap.put("result", result);
+		resultMap.put("resultMsg", resultMsg);
+		
+		logger.info("+ End saveFileTest");
+		
+		return resultMap;
+	}*/
    
 }

@@ -85,6 +85,8 @@
      						,	user_type
      						,	name
      						,	password
+     						,	email_cop
+     						,	birthday
      						,	gender_cd
      						,	user_tel1
      						,	user_tel2
@@ -92,38 +94,60 @@
      						,	user_zipcode
      						,	user_address
      						,	user_dt_address
-     						,	user_account
-     						,	bank_cd
+							,	consult_yn
      						,	del_cd
      						,	div_cd
      						,	user_email
      						,	user_company
      						,	approval_cd
+     						,	salary
+     						,	career_yn
+     						,	career_mm
      						)
      						VALUES (
      								#{loginID}
 								,	#{user_type}
 								,	#{name}  
 								,	#{password}  
+								,	#{email_cop}
 								,	#{gender_cd}  
+								,	#{birthday}    
 								,	#{user_tel1}  
 								,	#{user_tel2}  
 								,	#{user_tel3}  
 								,	#{user_zipcode}  
 								,	#{user_address}  
 								,	#{user_dt_address}
-								,	#{user_account}
-								,	(select detail_code from tb_detail_code where detail_name = #{bank_cd})
+								,	#{consult_yn}					
 								,	#{del_cd}
 								,	#{div_cd}    	
 								,	#{user_email}  
 								,	#{user_company}		
 								,	#{approval_cd}			
+     							,	#{salary}								
+								,	#{career_yn}								
+								,	#{career_mm}
      						)
      
      
      </insert>
      
+     <!-- 사용자스킬보 -->
+     <insert id="registerUser_skill" parameterType="java.util.Map">
+     /*kr.kosmo.jobkorea.login.dao.LoginDao.registerUser*/
+     INSERT INTO tb_userskill (
+     							loginID
+     						,	detail_code
+     						,	group_code
+     						)
+     						VALUES (
+     								#{loginID}
+								,	#{detail_code)	
+								,	#{group_code)
+     						)
+     
+     
+     </insert>
      
      <!-- 중복 검사  loginID 중복검사 -->
 	<select id="check_loginID" parameterType="String" resultType="int">
@@ -149,44 +173,7 @@
       WHERE   u.del_cd ="n"
       AND	  u.user_email = #{user_email}
      </select>
-<!--    <select id="selectFindId" resultType="kr.happyjob.study.login.model.LgnInfoModel">
-      /*kr.kosmo.jobkorea.login.dao.LoginDao.selectFindId*/
-      SELECT  ta.lgn_id
-      , tb.cpn_ctr
-      , tb.cpn_1
-      , tb.cpn_2
-      , tb.cpn_3
-      , tb.eml
-      FROM   tm_usr_mst ta
-         ,   tn_usr_dtl_info tb
-      WHERE   ta.usr_sst_id = tb.usr_sst_id
-      AND   ta.use_poa = 'Y'
-      AND   ta.dlt_poa = 'N'
-      <choose>
-         <when test ="(type != null) and (type eq 'P'.toString())">
-            AND   ta.usr_nm = #{usr_nm}
-            AND tb.cpn_ctr = #{cpn_ctr}
-            AND tb.cpn_1 = #{cpn_1}
-            AND tb.cpn_2 = #{cpn_2} 
-            AND tb.cpn_3 = #{cpn_3}
-         </when>
-         <when test ="(type != null) and (type eq 'E'.toString())">
-            AND   ta.usr_nm = #{usr_nm}
-            AND tb.eml = #{eml}
-         </when>
-         <otherwise>
-            AND 1=2
-         </otherwise>
-      </choose>
-     </select> -->
-     <!-- select박스 은행 목록 -->
-     <select id="selectBankList" resultType="kr.happyjob.study.login.model.LgnInfoModel">
-     /*kr.happyjob.study.login.dao.LoginDao.selectBankList*/
-     SELECT detail_name 
-     	,	detail_code
-     FROM   tb_detail_code
-	 WHERE  group_code = 'bankCD'
-     </select>
+
       
      <!-- 사용자 PW 찾기 -->
      <select id="selectFindPw" resultType="kr.happyjob.study.login.model.LgnInfoModel">
@@ -199,39 +186,7 @@
       AND	  u.user_email = #{user_email}
       AND 	  u.loginID = #{loginID}
      </select>
-   <!-- <select id="selectFindPw" resultType="kr.happyjob.study.login.model.LgnInfoModel">
-      /*kr.kosmo.jobkorea.login.dao.LoginDao.selectFindPw*/
-      SELECT  ta.lgn_id
-      , ta.pwd
-      , tb.cpn_ctr
-      , tb.cpn_1
-      , tb.cpn_2
-      , tb.cpn_3
-      , tb.eml
-      FROM   tm_usr_mst ta
-         ,   tn_usr_dtl_info tb
-      WHERE   ta.usr_sst_id = tb.usr_sst_id
-      AND   ta.use_poa = 'Y'
-      AND   ta.dlt_poa = 'N'
-      <choose>
-         <when test ="(type != null) and (type eq 'P'.toString())">
-            AND ta.lgn_id = #{lgn_id}
-            AND   ta.usr_nm = #{usr_nm}
-            AND tb.cpn_ctr = #{cpn_ctr}
-            AND tb.cpn_1 = #{cpn_1}
-            AND tb.cpn_2 = #{cpn_2}
-            AND tb.cpn_3 = #{cpn_3}
-         </when>
-         <when test ="(type != null) and (type eq 'E'.toString())">
-            AND ta.lgn_id = #{lgn_id}
-            AND   ta.usr_nm = #{usr_nm}
-            AND tb.eml = #{eml}
-         </when>
-         <otherwise>
-            AND 1=2
-         </otherwise>
-      </choose>
-     </select> -->
+
      
      <!-- 사용자 PW 찾기 ID 체크-->
      <select id="registerIdCheck" resultType="kr.happyjob.study.login.model.LgnInfoModel">
@@ -240,5 +195,41 @@
      WHERE   	u.del_cd ="n"
      AND 	  	u.loginID = #{loginID}
      </select>  
+     
+     
+     <!-- 이력서 파일 업로드 -->
+     <insert id="insertUserinfoFile">
+	     insert into tb_userinfoFile (
+			  uf_title,uf_contents,uf_cnt,file_nm,file_loc,file_size,enr_user,enr_date,upd_user,upd_date
+			)select
+			  ,#{uf_title}  <!-- qna_title - IN varchar(50) -->
+			  ,#{uf_contents}   <!-- qna_contents - IN varchar(50)-->
+			  ,0    <!-- qna_cnt - IN int(11) -->
+			  ,#{fileInfo.file_nm}   <!-- file_nm - IN varchar(50) -->
+			  ,#{fileInfo.file_loc}  <!--  file_loc - IN varchar(50) -->
+			  ,#{fileInfo.file_size}   <!-- file_size - IN varchar(50) -->
+			  ,#{enr_user}   <!-- enr_user - IN varchar(20) -->
+			  ,DATE_FORMAT(NOW(),'%Y-%c-%d %T' )  <!--  enr_date - IN date -->
+			  ,#{upd_user}   <!-- upd_user - IN varchar(20) -->
+			  ,DATE_FORMAT(NOW(),'%Y-%c-%d %T' )   <!--  upd_date - IN date -->
+			from tb_userinfoFile
+	</insert>
+	
+	<select id="getDirectory" resultType="String">
+		select concat('F', date_format(now(),'%y%m%d')) AS dirPath
+	</select>
+	
+	<update id="updateUserinfoFile">
+		update tb_userinfoFile SET
+		   qna_title = #{qna_title} <!-- varchar(50) -->
+		  ,qna_contents =  concat(DATE_FORMAT(NOW(),'%Y-%c-%d %T' ),'- 수정됨 \n',#{qna_contents}) <!-- varchar(50) -->
+		  ,file_nm = #{file_nm} <!-- varchar(50) -->
+		  ,file_loc = #{file_loc}  <!--  varchar(50) -->
+		  ,file_size = #{file_size}  <!-- varchar(50) -->
+		  ,upd_user = #{loginID} <!-- varchar(20) -->
+		  ,upd_date = DATE_FORMAT(NOW(),'%Y-%c-%d %T' )  <!-- date -->
+		WHERE qna_seq = #{qna_seq} <!--  varchar(20) -->
+	
+	</update>
 
 </mapper>

@@ -1,32 +1,48 @@
 package kr.happyjob.study.login.model;
 
 public class UserInfo {
-
+	
+/*		loginID
+	,	user_type
+	,	name
+	,	password
+	,	email_cop
+	,	birthday
+	,	gender_cd
+	,	user_tel1
+	,	user_tel2
+	,	user_tel3
+	,	user_zipcode
+	,	user_address
+	,	user_dt_address
+,	consult_yn
+	,	del_cd
+	,	div_cd
+	,	user_email
+	,	user_company
+	,	approval_cd*/
 	private String loginID;
 	private String user_type;
 	private String name;
 	private String password;
-	private String age;
-	private String sex;
-	private String hp;
+	private String email_cop;
+	private String birthday;
+	private String gender_cd;
 	private String tel1;
 	private String tel2;
 	private String tel3;
-	private String email;
-	private String zipcd;
-	private String addr;
- 	private String dtladdr;
-	private String joinDate;
-	private String course;
-	private String file_name;
-	private String file_path;
-	private int file_size;	
-	private String marride;
-	private String milservice;
-	private String anarm;
-	private String mil_str_date;
-	private String mil_end_date;
-	
+	private String user_zipcode;
+	private String user_address;
+	private String user_dt_address;
+ 	private String consult_yn;
+	private String del_cd;
+	private String div_cd;
+	private String user_email;
+	private String user_company;
+	private String approval_cd;
+	private	String salary;
+	private	String career_yn;
+	private	String career_mm;
 	
 	public String getLoginID() {
 		return loginID;
@@ -52,23 +68,23 @@ public class UserInfo {
 	public void setPassword(String password) {
 		this.password = password;
 	}
-	public String getAge() {
-		return age;
+	public String getEmail_cop() {
+		return email_cop;
 	}
-	public void setAge(String age) {
-		this.age = age;
+	public void setEmail_cop(String email_cop) {
+		this.email_cop = email_cop;
 	}
-	public String getSex() {
-		return sex;
+	public String getBirthday() {
+		return birthday;
 	}
-	public void setSex(String sex) {
-		this.sex = sex;
+	public void setBirthday(String birthday) {
+		this.birthday = birthday;
 	}
-	public String getHp() {
-		return hp;
+	public String getGender_cd() {
+		return gender_cd;
 	}
-	public void setHp(String hp) {
-		this.hp = hp;
+	public void setGender_cd(String gender_cd) {
+		this.gender_cd = gender_cd;
 	}
 	public String getTel1() {
 		return tel1;
@@ -88,89 +104,79 @@ public class UserInfo {
 	public void setTel3(String tel3) {
 		this.tel3 = tel3;
 	}
-	public String getEmail() {
-		return email;
+	public String getUser_zipcode() {
+		return user_zipcode;
 	}
-	public void setEmail(String email) {
-		this.email = email;
+	public void setUser_zipcode(String user_zipcode) {
+		this.user_zipcode = user_zipcode;
 	}
-	public String getZipcd() {
-		return zipcd;
+	public String getUser_address() {
+		return user_address;
 	}
-	public void setZipcd(String zipcd) {
-		this.zipcd = zipcd;
+	public void setUser_address(String user_address) {
+		this.user_address = user_address;
 	}
-	public String getAddr() {
-		return addr;
+	public String getUser_dt_address() {
+		return user_dt_address;
 	}
-	public void setAddr(String addr) {
-		this.addr = addr;
+	public void setUser_dt_address(String user_dt_address) {
+		this.user_dt_address = user_dt_address;
 	}
-	public String getDtladdr() {
-		return dtladdr;
+	public String getConsult_yn() {
+		return consult_yn;
 	}
-	public void setDtladdr(String dtladdr) {
-		this.dtladdr = dtladdr;
+	public void setConsult_yn(String consult_yn) {
+		this.consult_yn = consult_yn;
 	}
-
-	public String getJoinDate() {
-		return joinDate;
+	public String getDel_cd() {
+		return del_cd;
 	}
-	public void setJoinDate(String joinDate) {
-		this.joinDate = joinDate;
+	public void setDel_cd(String del_cd) {
+		this.del_cd = del_cd;
 	}
-	public String getCourse() {
-		return course;
+	public String getDiv_cd() {
+		return div_cd;
 	}
-	public void setCourse(String course) {
-		this.course = course;
+	public void setDiv_cd(String div_cd) {
+		this.div_cd = div_cd;
 	}
-	public String getFile_name() {
-		return file_name;
+	public String getUser_email() {
+		return user_email;
 	}
-	public void setFile_name(String file_name) {
-		this.file_name = file_name;
+	public void setUser_email(String user_email) {
+		this.user_email = user_email;
 	}
-	public String getFile_path() {
-		return file_path;
+	public String getUser_company() {
+		return user_company;
 	}
-	public void setFile_path(String file_path) {
-		this.file_path = file_path;
+	public void setUser_company(String user_company) {
+		this.user_company = user_company;
 	}
-	public int getFile_size() {
-		return file_size;
+	public String getApproval_cd() {
+		return approval_cd;
 	}
-	public void setFile_size(int file_size) {
-		this.file_size = file_size;
+	public void setApproval_cd(String approval_cd) {
+		this.approval_cd = approval_cd;
 	}
-	public String getMarride() {
-		return marride;
+	public String getSalary() {
+		return salary;
 	}
-	public void setMarride(String marride) {
-		this.marride = marride;
+	public void setSalary(String salary) {
+		this.salary = salary;
 	}
-	public String getMilservice() {
-		return milservice;
+	public String getCareer_yn() {
+		return career_yn;
 	}
-	public void setMilservice(String milservice) {
-		this.milservice = milservice;
+	public void setCareer_yn(String career_yn) {
+		this.career_yn = career_yn;
 	}
-	public String getAnarm() {
-		return anarm;
+	public String getCareer_mm() {
+		return career_mm;
 	}
-	public void setAnarm(String anarm) {
-		this.anarm = anarm;
+	public void setCareer_mm(String career_mm) {
+		this.career_mm = career_mm;
 	}
-	public String getMil_str_date() {
-		return mil_str_date;
-	}
-	public void setMil_str_date(String mil_str_date) {
-		this.mil_str_date = mil_str_date;
-	}
-	public String getMil_end_date() {
-		return mil_end_date;
-	}
-	public void setMil_end_date(String mil_end_date) {
-		this.mil_end_date = mil_end_date;
-	}
+	
+	
+	
 }

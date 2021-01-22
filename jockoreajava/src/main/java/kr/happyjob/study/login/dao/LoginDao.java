@@ -34,13 +34,28 @@ public interface LoginDao {
 	/** 사용자 회원가입*/
 	public int registerUser(Map<String, Object> paramMap);
 	
+	/** 사용자스킬*/
+	public int registerUser_skill(Map<String, Object> paramMap);
+	
 	/**loginID 중복체크*/
 	public int check_loginID(LgnInfoModel model);
 	
 	/**이메일 중복체크*/
 	public int check_email(LgnInfoModel model);
 	
-	/**select박스 은행 목록*/
-	public List<LgnInfoModel> selectBankList();
+	/**이력서 파일 업로드 */
+	public static void insertResume(Map<String, Object> paramMap) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	public static String getDirectory() {
+		// TODO Auto-generated method stub
+		return null;
+	} 
+	
+	
+/*	*//**select박스 은행 목록*//*
+	public List<LgnInfoModel> selectBankList();*/
 	
 }

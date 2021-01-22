@@ -6,6 +6,7 @@ package kr.happyjob.study.login.model;
 
 public class LgnInfoModel {
 
+
 	//사용자 이메일
 	private String user_email;
 	
@@ -137,8 +138,8 @@ public class LgnInfoModel {
 
 	public void setMem_author(String mem_author) {
 		this.mem_author = mem_author;
-	}     
-	
+	}
+
 	
 	
 
