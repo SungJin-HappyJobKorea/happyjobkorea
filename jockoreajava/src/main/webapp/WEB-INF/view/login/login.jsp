@@ -155,8 +155,13 @@ function instaffRegister(){
 	$("#salary").val("");
 	$("#career_yn").val("");
 	$("#career_mm").val("");
-	$("#career_yn1").show();
-	$("#career_mm1").show();
+/*  	$("#career_yn option:selected").val();
+	$("#career_mm option:selected").val();
+	$("#career_yn option:selected").val();
+	$("#career_mm option:selected").val(); 
+	$("select[name=selectbox] option:selected").val(); 
+	$("#career_yn").show();
+	$("#career_mm").show();  */
 	
 	console.log($("#div_cd").val());
 	
@@ -1174,41 +1179,41 @@ function fSaveDataResult(data) {
 								</select></td>
 							</tr>
 							
-							<tr id="career_yn1">
+							<tr id="career_yn">
 								<th scope="row">경력기간<span class="font_red">*</span></th>
 								<td>
-								<select v-model="selected" id="career_yn">
-								  <option disabled value="">선택</option>
-								  <option value="">1년미만</option>
-								  <option value="">1</option>
-								  <option value="">2</option>
-								  <option value="">3</option>
-								  <option value="">4</option>
-								  <option value="">5</option>
-								  <option value="">6</option>
-								  <option value="">7</option>
-								  <option value="">8</option>
-								  <option value="">9</option>
-								  <option value="">10</option>
-								  <option value="">11</option>
-								  <option value="">12</option>
-								  <option value="">13</option>
-								  <option value="">14</option>
-								  <option value="">15</option>
-								  <option value="">16</option>
-								  <option value="">17</option>
-								  <option value="">18</option>
-								  <option value="">19</option>
-								  <option value="">20이상</option>
+								<select id="career_yn" name="selectbox" >
+								  <option value="">선택</option>
+								  <option value="0">1년미만</option>
+								  <option value="b">1</option>
+								  <option value="c">2</option>
+								  <option value="d">3</option>
+								  <option value="e">4</option>
+								  <option value="f">5</option>
+								  <option value="g">6</option>
+								  <option value="h">7</option>
+								  <option value="i">8</option>
+								  <option value="j">9</option>
+								  <option value="k">10</option>
+								  <option value="l">11</option>
+								  <option value="n">12</option>
+								  <option value="m">13</option>
+								  <option value="o">14</option>
+								  <option value="p">15</option>
+								  <option value="q">16</option>
+								  <option value="r">17</option>
+								  <option value="s">18</option>
+								  <option value="t">19</option>
+								  <option value="u">20이상</option>
 								</select>
 								<span>년</span>
 							</td>
 							</tr>
-							<tr class="row" id="career_mm1">
+							<tr class="row" id="career_mm">
 								<th scope="row"></th>
 								<td>
-								<select v-model="selected" id="career_mm">
-								  <option disabled value="">선택</option>
+								<select name="selectbox" id="career_mm">
+								  <option value="">선택</option>
 								  <option>1</option>
 								  <option>2</option>
 								  <option>3</option>
@@ -1287,12 +1292,7 @@ function fSaveDataResult(data) {
 								<td><input type="checkbox" style="width: 15px; height: 15px;" ></td>								
 									<td>{{ row.dtl_cod }}</td>
 								</table>
-								
-								<th scope="row">WS<span class="font_red">*</span></th>
-								<td colspan="2"><table v-for="(row, index) in langitems3" v-if="langitems3.length" v-model="chkbox"></td>
-								<td><input type="checkbox" style="width: 15px; height: 15px;" ></td>								
-									<td>{{ row.dtl_cod }}</td>
-								</table>
+						
 						</tr>
 					</table> 
 				
