@@ -1,4 +1,4 @@
-package kr.happyjob.study.dashboard.controller;
+package kr.happyjob.study.system.controller;
 
 import java.util.HashMap;
 import java.util.List;
@@ -18,46 +18,46 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import kr.happyjob.study.system.model.NoticeModel;
-import kr.happyjob.study.system.service.NoticeService;
+import kr.happyjob.study.system.model.UserMgmtModel;
+import kr.happyjob.study.system.service.UserMgmtService;
 
 @Controller
-public class DashboardController {
-	
+@RequestMapping("/system/")
+public class UserMgmtController {
+
 	@Autowired
-	NoticeService noticeService;
+	UserMgmtService userMgmtService;
 	
+	// Set logger
 	private final Logger logger = LogManager.getLogger(this.getClass());
 
 	// Get class name for logger
 	private final String className = this.getClass().toString();
-
-	@RequestMapping("/dashboard/dashboard.do")
-	public String initDashboard(Model model, @RequestParam Map<String, Object> paramMap, HttpServletRequest request,
+	
+	// 사용자 관리 페이지 연결
+	@RequestMapping("userMgmt.do")
+	public String initUserMgmt(Model model, @RequestParam Map<String, Object> paramMap, HttpServletRequest request,
 			HttpServletResponse response, HttpSession session) throws Exception {
 		
-		
-		logger.info("+ Start " + className + ".initDashboard");
-		/* ############## set input data################# */
-		paramMap.put("loginId", session.getAttribute("loginId")); // 제목
-		paramMap.put("userType", session.getAttribute("userType")); // 오피스 구분 //
-																	// 코드
-		paramMap.put("reg_date", session.getAttribute("reg_date")); // 등록 일자
+		logger.info("+ Start " + className + ".initUserMgmt");
 		logger.info("   - paramMap : " + paramMap);
+		
+		String loginID = (String) session.getAttribute("loginId");
+		paramMap.put("loginID", loginID);
+		System.out.println(loginID);
+		
+		logger.info("+ End " + className + ".initUserMgmt");
 
-		String returnType = "/dashboard/dashboardMgr";
-
-		logger.info("+ end " + className + ".initDashboard");
-
-		return returnType;
+		return "system/userMgmt";
 	}
 
-	// 공지사항 리스트 출력
-	@RequestMapping("/inf/listinf.do")
-	public String noticeList(Model model, @RequestParam Map<String, Object> paramMap, 
+	// 사용자 리스트 출력
+	@RequestMapping("userMgmtList.do")
+	public String userMgmtList(Model model, @RequestParam Map<String, Object> paramMap, 
 			HttpServletRequest request, HttpServletResponse response, HttpSession session) throws Exception {
 		
 		logger.info("   - paramMap : " + paramMap);
-//		String title = (String) paramMap.get("title");
+		//String sname = (String) paramMap.get("sname");
 		
 		int currentPage = Integer.parseInt((String) paramMap.get("currentPage")); // 현재페이지
 	    int pageSize = Integer.parseInt((String) paramMap.get("pageSize"));
@@ -65,37 +65,38 @@ public class DashboardController {
 		
 		paramMap.put("pageIndex", pageIndex);
 		paramMap.put("pageSize", pageSize);
-//		paramMap.put("title", title);
+		//paramMap.put("sname", sname);
 		
-		// 공지사항 목록 조회
-		List<NoticeModel> noticeList = noticeService.noticeList(paramMap);
-		model.addAttribute("notice", noticeList);
+		// 사용자 목록 조회
+		List<UserMgmtModel> userMgmtList = userMgmtService.userMgmtList(paramMap);
+		model.addAttribute("userMgmtList", userMgmtList);
 		
 		// 목록 수 추출해서 보내기
-		int noticeCnt = noticeService.noticeCnt(paramMap);
+		int userMgmtCnt = userMgmtService.userMgmtCnt(paramMap);
 		
-	    model.addAttribute("noticeCnt", noticeCnt);
+	    model.addAttribute("userMgmtCnt", userMgmtCnt);
 	    model.addAttribute("pageSize", pageSize);
 	    model.addAttribute("currentPage",currentPage);
 	    
-	    return "system/noticeList";
+	    return "system/userMgmtList";
 	}
 	
-	// 공지사항 상세 조회
-	@RequestMapping("detailNotice.do")
+	
+	// 사용자 상세 조회 - 회원가입 폼 불러올 부분(수정할예정 1/21)
+	@RequestMapping("userMgmtdetail.do")
 	@ResponseBody
-	public Map<String,Object> detailNotice(Model model, @RequestParam Map<String, Object> paramMap, HttpServletRequest request, HttpServletResponse response, HttpSession session) throws Exception {
+	public Map<String,Object> userMgmtdetail(Model model, @RequestParam Map<String, Object> paramMap, HttpServletRequest request, HttpServletResponse response, HttpSession session) throws Exception {
 		
 		//System.out.println("상세정보 보기를 위한 param에서 넘어온 값을 찍어봅시다.: " + paramMap);
-		  logger.info("+ Start " + className + ".detailNotice");
+		  logger.info("+ Start " + className + ".userMgmtdetail");
 		  logger.info("   - paramMap : " + paramMap);
 		  
 		String result="";
 		
 		// 선택된 게시판 1건 조회 
-		NoticeModel detailNotice = noticeService.noticeDetail(paramMap);
+		UserMgmtModel userMgmtdetail = userMgmtService.userMgmtDetail(paramMap);
 		
-		if(detailNotice != null) {
+		if(userMgmtdetail != null) {
 			result = "SUCCESS";  // 성공시 찍습니다. 
 		}else {
 			result = "FAIL / 불러오기에 실패했습니다.";  // null이면 실패입니다.
@@ -103,13 +104,12 @@ public class DashboardController {
 		
 		Map<String, Object> resultMap = new HashMap<String, Object>();
 		resultMap.put("resultMsg", result); // success 용어 담기 
-		resultMap.put("result", detailNotice); // 리턴 값 해쉬에 담기 
+		resultMap.put("result", userMgmtdetail); // 리턴 값 해쉬에 담기 
 		//resultMap.put("resultComments", comments);
-		System.out.println(detailNotice);
+		System.out.println(userMgmtdetail);
 		
-		logger.info("+ End " + className + ".detailNotice");
+		logger.info("+ End " + className + ".userMgmtdetail");
 	    
 	    return resultMap;
 	}
-
 }

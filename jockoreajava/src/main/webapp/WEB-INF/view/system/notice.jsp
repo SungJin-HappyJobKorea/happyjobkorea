@@ -6,23 +6,31 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title> 자유게시판  </title>
+<title> 공지사항  </title>
 
 <jsp:include page="/WEB-INF/view/common/common_include.jsp"></jsp:include>
 
 <script type="text/javascript">
 
 	// 페이징 설정 
-	var noticePageSize = 10;    	// 화면에 뿌릴 데이터 수 
-	var noticePageBlock = 5;		// 블럭으로 잡히는 페이징처리 수
+	var pageSize = 10;    	// 화면에 뿌릴 데이터 수 
+	var pageBlock = 5;		// 블럭으로 잡히는 페이징처리 수
 	
 	/* onload 이벤트  */
 	$(function(){
-		// 자유게시판 리스트 뿌리기 함수 
+		// 공지사항 리스트 뿌리기 함수 
 		selectNoticeList();
 		
 		// 버튼 이벤트 등록 (저장, 수정, 삭제, 모달창 닫기)
 		fButtonClickEvent();
+		
+/* 		$("#to_date").change(function() {
+			if ($("#to_date").val() <$("#from_date").val()){
+				alert("최소기간 보다 작을수 없습니다.")
+				$("#to_date").val('');
+			} 
+		}); */
+		
 	});
 	
 	/* 버튼 이벤트 등록 - 저장, 수정, 삭제  */
@@ -46,9 +54,8 @@
 				break;
 			case 'btnUpdateNotice' : fUpdateNotice();  // 수정하기
 				break;
-			case 'searchBtn' : board_search();  // 검색하기
-			break;
-			
+			case 'searchBtn' : selectNoticeList();  // 검색하기
+				break;
 				
 			//case 'commentWrite' : fCommentInsert();   // 댓글--> 답변글로 변경 // 저장 
 				//break;
@@ -62,11 +69,18 @@
 		currentPage = currentPage || 1;   // or		
 		
 //alert("지금 현재 페이지를 찍어봅시다. " + currentPage);
+		title = $("#title").val();
+		from_date =$("#from_date").val();
+		to_date =$("#to_date").val();
 		
 		var param = {
+				title : title , 
 				currentPage : currentPage ,
-				pageSize : noticePageSize 
+				pageSize : pageSize , 
+				from_date:from_date,
+				to_date:to_date
 		}
+
 		
 		var resultCallback = function(data){  // 데이터를 이 함수로 넘깁시다. 
 			noticeListResult(data, currentPage); 
@@ -89,20 +103,17 @@
 	 /* 공지사항 리스트 data를 콜백함수를 통해 뿌려봅시당   */
 	 function noticeListResult(data, currentPage){
 		 
+		 console.log(data);
+		 
 		 // 일단 기존 목록을 삭제합니다. (변경시 재부팅 용)
-		 $("#noticeList").empty();
-		 //alert("데이터!!! " + data);
-		 //console.log("data !!!! " +  data);
+		 $('#noticeList').empty();
 		 
-		 //var $data = $( $(data).html() ); // data의 .html()통해서 html구문을 끌어온다.
-		 //alert("데이터 찍어보자!!!! " +  $data); // object
-		 
-		 $("#noticeList").append(data);
+		 $('#noticeList').append(data);
 	
 		 
 		 // 리스트의 총 개수를 추출합니다. 
 		 //var totalCnt = $data.find("#totalCnt").text();
-		 var totalCnt = $("#totalCnt").val();  // qnaRealList() 에서보낸값 
+		 var totalCnt = $("#totcnt").val();  // qnaRealList() 에서보낸값 
 	     //alert("totalCnt 찍어봄!! " + totalCnt);
 		 
 		 // * 페이지 네비게이션 생성 (만들어져있는 함수를 사용한다 -common.js)
@@ -110,7 +121,7 @@
 		 // 파라미터를 참조합시다. 
 	     var list = $("#tmpList").val();
 		 //var listnum = $("#tmpListNum").val();
-	     var pagingnavi = getPaginationHtml(currentPage, totalCnt, noticePageSize,noticePageBlock, 'selectNoticeList',[list]);
+	     var pagingnavi = getPaginationHtml(currentPage, totalCnt, pageSize, pageBlock, 'selectNoticeList',[list]);
 		 
 	     console.log("pagingnavi : " + pagingnavi);
 		 // 비운다음에 다시 append 
@@ -132,10 +143,10 @@
 	         
 	         var param = {
 	                   title : title.val()
+	               ,   currentPage : currentPage
+	               ,   pageSize : pageSize
 	               ,   from_date : from_date.val()
 	               ,   to_date : to_date.val()
-	               ,   currentPage : currentPage
-	               ,   pageSize : noticePageSize
 	         }
 	         
 	         var resultCallback = function(data) {
@@ -148,15 +159,15 @@
 	
 	 
 	 /* 공지사항 모달창(팝업) 실행  */
-	 function fNoticeModal(nt_no) {
+	 function fNoticeModal(noticeNo) {
 		 
 		 // 신규저장 하기 버튼 클릭시 (값이 null)
-		 if(nt_no == null || nt_no==""){
+		 if(noticeNo == null || noticeNo==""){
 			// Tranjection type 설정
-			//alert("넘을 찍어보자!!!!!!" + nt_no);
+			//alert("넘을 찍어보자!!!!!!" + noticeNo);
 			
 			$("#action").val("I"); // insert 
-			frealPopModal(nt_no); // 공지사항 초기화 
+			frealPopModal(noticeNo); // 공지사항 초기화 
 			
 			//모달 팝업 모양 오픈! (빈거) _ 있는 함수 쓰는거임. 
 			gfModalPop("#notice");
@@ -164,22 +175,22 @@
 		 }else{
 			// Tranjection type 설정
 			$("#action").val("U");  // update
-			fdetailModal(nt_no); //번호로 -> 공지사항 상세 조회 팝업 띄우기
+			fdetailModal(noticeNo); //번호로 -> 공지사항 상세 조회 팝업 띄우기
 		 }
 
 	 }
 	 
 	 
 	 /*공지사항 상세 조회*/
-	 function fdetailModal(nt_no){
+	 function fdetailModal(noticeNo){
 		 //alert("공지사항 상세 조회  ");
 		 
-		 var param = {nt_no : nt_no};
+		 var param = {noticeNo : noticeNo};
 		 var resultCallback2 = function(data){
 			 fdetailResult(data);
 		 };
 		 
-		 callAjax("/system/detailNoticeList.do", "post", "json", true, param, resultCallback2);
+		 callAjax("/system/detailNotice.do", "post", "json", true, param, resultCallback2);
 		 //alert("공지사항 상세 조회  22");
 	 }
 	 
@@ -206,13 +217,13 @@
 			 var writer = $("#swriter").val();
 			 //var Now = new Date();
 			 
-			 $("#loginID").val(writer);
-			 $("#loginID").attr("readonly", true);
+			 $("#loginId").val(writer);
+			 $("#loginId").attr("readonly", true);
 			 
 			 $("#write_date").val();
 			 
-			 $("#nt_title").val("");
-			 $("#nt_note").val("");
+			 $("#noticeTitle").val("");
+			 $("#noticeContent").val("");
 			 
 			 $("#btnDeleteNotice").hide(); // 삭제버튼 숨기기
 			 $("#btnUpdateNotice").hide();
@@ -222,17 +233,18 @@
 		 }else{
 			 
 			 //alert("숫자찍어보세 : " + object.wno);// 페이징 처리가 제대로 안되서 
-			 $("#loginID").val(object.loginID);
-			 $("#loginID").attr("readonly", true); // 작성자 수정불가 
+			 $("#loginId").val(object.loginId);
+			 $("#loginId").attr("readonly", true); // 작성자 수정불가 
 			 
-			 $("#write_date").val(object.write_date);
+			 $("#write_date").val(object.noticeRegdate);
 			 $("#write_date").attr("readonly", true); // 처음 작성된 날짜 수정불가 
 			 
-			 $("#nt_title").val(object.nt_title);
-			 $("#nt_note").val(object.nt_note);
-
+			 $("#noticeTitle").val(object.noticeTitle);
+			 $("#noticeContent").val(object.noticeContent);
+			//////object.noticeNo
 			 
-			 $("#nt_no").val(object.nt_no); // 중요한 num 값도 숨겨서 받아온다. 
+			 $("#noticeNo").val(object.noticeNo); // 중요한 num 값도 숨겨서 받아온다. 
+			 
 			 
 			 $("#btnDeleteNotice").show(); // 삭제버튼 보이기 
 			 $("#btnSaveNotice").hide();
@@ -287,9 +299,9 @@
 		 if(data.resultMsg == "SUCCESS"){
 			 //alert(data.resultMsg);	// 받은 메세지 출력 
 			 alert("저장 되었습니다.");
-		 }else if(data.resultMsg == "UPDATE") {
+		 }else if(data.resultMsg == "UPDATED") {
 			 alert("수정 되었습니다.");
-		 }else if(data.resultMsg == "DELETE") {
+		 }else if(data.resultMsg == "DELETED") {
 			 alert("삭제 되었습니다.");
 		 }else{
 			 alert(data.resultMsg); //실패시 이거 탄다. 
@@ -326,7 +338,7 @@
 				 fSaveNoticeResult(data);
 			 }
 			 $("#action").val("D");  // delete
-			 callAjax("/system/noticeSave.do", "post", "json", true, $("#myNotice").serialize(), resultCallback3);
+			 callAjax("/system/noticeDelete.do", "post", "json", true, $("#myNotice").serialize(), resultCallback3);
 			 // num만 넘겨도되지만 그냥 귀찮으니깐...^^... 
 		 }else{
 			 gfCloseModal();	// 모달 닫기
@@ -350,7 +362,7 @@
 	<input type="hidden" id="tmpList" value=""> <!-- ★ 이거뭐임??? -->
 	<input type="hidden" id="tmpListNum" value=""> <!-- 스크립트에서 값을 설정해서 넘길거임 / 임시 리스트 넘버 -->
 	<input type="hidden" name="action" id="action" value=""> 
-	<input type="hidden" id="swriter" value="${writer}"> <!-- 작성자 session에서 java에서 넘어온값 -->
+	<input type="hidden" id="swriter" value="${loginId}"> <!-- 작성자 session에서 java에서 넘어온값 -->
 
 	<div id="wrap_area">
 
@@ -371,7 +383,7 @@
 
 						<p class="Location">
 							<a href="#" class="btn_set home">메인으로</a> 
-							<a href="#" class="btn_nav">시스템 관리</a> 
+							<a href="#" class="btn_nav bold">시스템 관리</a> 
 								<span class="btn_nav bold">공지 사항</span> 
 								<a href="#" class="btn_set refresh">새로고침</a>
 						</p>
@@ -407,7 +419,7 @@
                      </table>    
 						
 						
-						<div class="divComGrpCodList">
+						<div class="divNoticeList">
 							<table class="col">
 								<caption>caption</caption>
 	
@@ -431,21 +443,6 @@
 							
 							<!-- 페이징 처리  -->
 							<div class="paging_area" id="pagingnavi">
-								<div class="paging">
-									<a class="first" href="javascript:selectNoticeList(1)">
-									<span class="hidden">맨앞</span></a>
-									<a class="pre" href="javascript:selectNoticeList(1)">
-									<span class="hidden">이전</span></a>
-									<strong>1</strong> 
-									<a href="javascript:selectNoticeList(2)">2</a> 
-									<a href="javascript:selectNoticeList(3)">3</a> 
-									<a href="javascript:selectNoticeList(4)">4</a>
-									<a href="javascript:selectNoticeList(5)">5</a>
-									<a class="next" href="javascript:selectNoticeList(5)">
-									<span class="hidden">다음</span></a>
-									<a class="last" href="javascript:selectNoticeList(5)">
-									<span class="hidden">맨뒤</span></a>
-								</div>
 							</div>
 											
 						</div>
@@ -463,7 +460,7 @@
 
 	<!-- 모달팝업 -->
 	<div id="notice" class="layerPop layerType2" style="width: 600px;">
-		<input type="hidden" id="nt_no" name="nt_no"> <!-- 수정시 필요한 num 값을 넘김  -->
+		<input type="hidden" id="noticeNo" name="noticeNo" value="${noticeNo}"> <!-- 수정시 필요한 num 값을 넘김  -->
 		
 		<dl>
 			<dt>
@@ -477,19 +474,19 @@
 					<tbody>
 						<tr>
 							<th scope="row">작성자 <span class="font_red">*</span></th>
-							<td><input type="text" class="inputTxt p100" name="loginID" id="loginID" /></td>
+							<td><input type="text" class="inputTxt p100" name="loginId" id="loginId" /></td>
 							<!-- <th scope="row">작성일<span class="font_red">*</span></th>
 							<td><input type="text" class="inputTxt p100" name="write_date" id="write_date" /></td> -->
 						</tr>
 						<tr>
 							<th scope="row">제목 <span class="font_red">*</span></th>
 							<td colspan="3"><input type="text" class="inputTxt p100"
-								name="nt_title" id="nt_title" /></td>
+								name="noticeTitle" id="noticeTitle" /></td>
 						</tr>
 						<tr>
 							<th scope="row">내용</th>
 							<td colspan="3">
-								<textarea class="inputTxt p100" name="nt_note" id="nt_note">
+								<textarea class="inputTxt p100" name="noticeContent" id="noticeContent">
 								</textarea>
 							</td>
 						</tr>

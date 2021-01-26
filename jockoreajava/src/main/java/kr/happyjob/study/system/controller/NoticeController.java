@@ -1,4 +1,4 @@
-package kr.happyjob.study.dashboard.controller;
+package kr.happyjob.study.system.controller;
 
 import java.util.HashMap;
 import java.util.List;
@@ -21,43 +21,43 @@ import kr.happyjob.study.system.model.NoticeModel;
 import kr.happyjob.study.system.service.NoticeService;
 
 @Controller
-public class DashboardController {
+@RequestMapping("/system/")
+public class NoticeController {
 	
 	@Autowired
 	NoticeService noticeService;
 	
+	// Set logger
 	private final Logger logger = LogManager.getLogger(this.getClass());
 
 	// Get class name for logger
 	private final String className = this.getClass().toString();
-
-	@RequestMapping("/dashboard/dashboard.do")
-	public String initDashboard(Model model, @RequestParam Map<String, Object> paramMap, HttpServletRequest request,
+	
+	
+	
+	// 처음 로딩될 때 공지사항 연결
+	@RequestMapping("notice.do")
+	public String init(Model model, @RequestParam Map<String, Object> paramMap, HttpServletRequest request,
 			HttpServletResponse response, HttpSession session) throws Exception {
-		
-		
-		logger.info("+ Start " + className + ".initDashboard");
-		/* ############## set input data################# */
-		paramMap.put("loginId", session.getAttribute("loginId")); // 제목
-		paramMap.put("userType", session.getAttribute("userType")); // 오피스 구분 //
-																	// 코드
-		paramMap.put("reg_date", session.getAttribute("reg_date")); // 등록 일자
+
+		logger.info("+ Start " + className + ".initNotice");
 		logger.info("   - paramMap : " + paramMap);
-
-		String returnType = "/dashboard/dashboardMgr";
-
-		logger.info("+ end " + className + ".initDashboard");
-
-		return returnType;
+		
+		String loginID = (String) session.getAttribute("loginId");
+		paramMap.put("loginID", loginID);
+		System.out.println(loginID);
+//		paramMap.put("writer", loginID);
+		
+		return "system/notice";
 	}
-
+	
 	// 공지사항 리스트 출력
-	@RequestMapping("/inf/listinf.do")
+	@RequestMapping("noticeList.do")
 	public String noticeList(Model model, @RequestParam Map<String, Object> paramMap, 
 			HttpServletRequest request, HttpServletResponse response, HttpSession session) throws Exception {
 		
 		logger.info("   - paramMap : " + paramMap);
-//		String title = (String) paramMap.get("title");
+		String title = (String) paramMap.get("title");
 		
 		int currentPage = Integer.parseInt((String) paramMap.get("currentPage")); // 현재페이지
 	    int pageSize = Integer.parseInt((String) paramMap.get("pageSize"));
@@ -65,7 +65,7 @@ public class DashboardController {
 		
 		paramMap.put("pageIndex", pageIndex);
 		paramMap.put("pageSize", pageSize);
-//		paramMap.put("title", title);
+		paramMap.put("title", title);
 		
 		// 공지사항 목록 조회
 		List<NoticeModel> noticeList = noticeService.noticeList(paramMap);
@@ -111,5 +111,62 @@ public class DashboardController {
 	    
 	    return resultMap;
 	}
+	
+	// 공지사항 신규등록, 업데이트
+	@RequestMapping("noticeSave.do")
+	@ResponseBody
+	public Map<String, Object> noticeSave(Model model, @RequestParam Map<String, Object> paramMap, HttpServletRequest request, HttpServletResponse response, HttpSession session) throws Exception {
+		
+		logger.info("+ Start " + className + ".noticeSave");
+		logger.info("   - paramMap : " + paramMap);
+		
+		String action = (String)paramMap.get("action");
+		String resultMsg = "";
+		
+		// 사용자 정보 설정
+		paramMap.put("loginID", session.getAttribute("loginId"));
+		if ("I".equals(action)) {
+			// 그룹코드 신규 저장
+			noticeService.insertNotice(paramMap);
+			resultMsg = "SUCCESS";
+		} else if("U".equals(action)) {
+			// 그룹코드 수정 저장
+			noticeService.updateNotice(paramMap);
+			resultMsg = "UPDATED";
+			System.out.println(paramMap);
+		} else {
+			resultMsg = "FALSE : 등록에 실패하였습니다.";
+		}
+		
+		//결과 값 전송
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		resultMap.put("resultMsg", resultMsg);
+	    
+	    return resultMap;
+	}
+	
+	// 공지사항 삭제
+	@RequestMapping("noticeDelete.do")
+	@ResponseBody
+	public Map<String, Object> noticeDelete(Model model, @RequestParam Map<String, Object> paramMap, HttpServletRequest request,
+			HttpServletResponse response, HttpSession session) throws Exception {
+		
+		logger.info("+ Start " + className + ".noticeDelete");
+		logger.info("   - paramMap : " + paramMap);
 
+		String result = "SUCCESS";
+		String resultMsg = "삭제 되었습니다.";
+		
+		// 그룹코드 삭제
+		noticeService.deleteNotice(paramMap);
+		
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		resultMap.put("result", result);
+		resultMap.put("resultMsg", resultMsg);
+		
+		logger.info("+ End " + className + ".noticeDelete");
+		
+		return resultMap;
+	}
+	
 }

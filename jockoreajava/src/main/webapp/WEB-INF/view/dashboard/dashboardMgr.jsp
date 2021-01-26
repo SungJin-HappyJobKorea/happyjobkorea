@@ -30,7 +30,10 @@ click-able rows
 
 		/* onload 이벤트  */
 		$(function(){
-			comcombo("DBCD", "areasel", "all", "53");   // Group Code, Combo Name, Option("all" : 전체     "sel" : 선택 , Select Value )  
+			comcombo("areaCD", "areaall", "all", "2");   // Group Code, Combo Name, Option("all" : 전체     "sel" : 선택 , Select Value )  
+			comcombo("JOBCD", "joball", "all", "3");   // Group Code, Combo Name, Option("all" : 전체     "sel" : 선택 , Select Value )  
+			comcombo("industryCD", "industryall", "allindustry", "J62");   // Group Code, Combo Name, Option("all" : 전체     "sel" : 선택 , Select Value )  
+			
 			// 공지사항 조회
 			fListInf();
 			
@@ -55,7 +58,7 @@ click-able rows
 	}
 				  
 				
-		/** 1:1문의 조회 */
+		/** 공지사항 조회 */
 		function fListInf(currentPage) {
 			
 			currentPage = currentPage || 1;
@@ -78,7 +81,7 @@ click-able rows
 		}
 		
 		
-		/** 1:1문의 조회 콜백 함수 */
+		/** 공지사항 조회 콜백 함수 */
 		function fListInfResult(data, currentPage) {
 					//alert(data);
 			console.log(data);		
@@ -99,7 +102,53 @@ click-able rows
 		
 		}
 		
-		/** 1:1문의 모달 실행 */
+		 /*공지사항 상세 조회*/
+		 function fNoticeModal(noticeNo) {
+		
+			 var param = {noticeNo : noticeNo};
+			 var resultCallback2 = function(data){
+				 fdetailResult(data);
+			 };
+			 
+			 callAjax("/system/detailNotice.do", "post", "json", true, param, resultCallback2);
+		 }
+		
+		 /*  공지사항 상세 조회 -> 콜백함수   */
+		 function fdetailResult(data){
+
+			 if(data.resultMsg == "SUCCESS"){
+				 //모달 띄우기 
+				 gfModalPop("#notice");
+				 
+				// 모달에 정보 넣기 
+				frealPopModal(data.result);
+			 
+			 }else{
+				 alert(data.resultMsg);
+			 }
+		 }
+		
+		 /* 팝업 _ 초기화 페이지(신규) 혹은 내용뿌리기  */
+		 function frealPopModal(object){
+			 
+			 $("#loginId").val(object.loginId);
+			 $("#loginId").attr("readonly", true); // 작성자 수정불가 
+			 
+			 $("#write_date").val(object.noticeRegdate);
+			 $("#write_date").attr("readonly", true); // 처음 작성된 날짜 수정불가 
+			 
+			 $("#noticeTitle").val(object.noticeTitle);
+			 $("#noticeTitle").attr("readonly", true);
+
+			 $("#noticeContent").val(object.noticeContent);
+			 $("#noticeContent").attr("readonly", true);
+			 
+			 $("#noticeNo").val(object.noticeNo); // 중요한 num 값도 숨겨서 받아온다. 
+			 
+			 
+		 }
+		
+		/** 1:1 문의 모달 실행 */
 		function fPopModalInf(notice_no) {
 
 			 $("#selectedInfNo").val(notice_no);
@@ -161,63 +210,115 @@ click-able rows
 								class="btn_nav bold">메인</span> <a href="../dashboard/dashboard.do"
 								class="btn_set refresh">새로고침</a>
 						</p>
-						<c:choose>
-   					 	<c:when test="${sessionScope.userType eq 'A'}">
-							<jsp:include
-							page="/WEB-INF/view/dashboard/dashboardScm.jsp"></jsp:include>
-    					</c:when>
-    					
-    					<c:when test="${sessionScope.userType eq 'B'}">
-							<jsp:include
-							page="/WEB-INF/view/dashboard/dashboardDlm.jsp"></jsp:include>
-    					</c:when>
-    					
-    					<c:when test="${sessionScope.userType eq 'C'}">
-							<jsp:include
-							page="/WEB-INF/view/dashboard/dashboardEpc.jsp"></jsp:include>
-    					</c:when>
-    					
-    					<c:when test="${sessionScope.userType eq 'D'}">
-							<jsp:include
-							page="/WEB-INF/view/dashboard/dashboardPcm.jsp"></jsp:include>
-    					</c:when>
-    					
-    					<c:otherwise>
-							<jsp:include
-							page="/WEB-INF/view/dashboard/dashboardGed.jsp"></jsp:include>
-    					</c:otherwise>
-					</c:choose>
-					     <select id="areasel" name="areasel">	</select>s
+
 						<p class="conTitle" style="margin-bottom: 1%;">
 							<span>공지 사항</span> <span class="fr"> 
+								<span>로그인</span>
+								<span>회원가입</span>
+								<span>마이페이지</span>
+								<!-- 
+								<c:if test="${sessionScope.userType eq null}">
+									<span>로그인</span>
+									<span>일반 회원가입</span>
+									<span>기업 회원가입</span>
+								</c:if>
+								<c:if test="${sessionScope.userType eq 'A'}">
+									<span>로그아웃</span>
+								</c:if>
+								<c:if test="${sessionScope.userType eq 'B'} or ${sessionScope.userType eq 'C'}">
+									<span>로그아웃</span>
+									<span>마이페이지</span>
+								</c:if>
+								 -->
 							</span>
 						</p>
 						
-             <div class="divComGrpCodList">
+						
+				             <div class="divComGrpCodList">
+								<table class="col">
+									<caption>caption</caption>
+									<colgroup>
+									   <col width="5%">
+										<col width="70%">
+										<col width="10%">
+										<col width="5%">
+									</colgroup>
+				
+									<thead>
+										<tr>
+										    <th scope="col">번호</th>
+											<th scope="col">제목</th>
+											<th scope="col">작성일</th>
+											<th scope="col">작성자</th>
+										</tr>
+									</thead>
+									<tbody id="listInf">
+									</tbody>
+								</table>
+							</div>
+										   
+					   <div class="paging_area"  id="listInfPagination"> </div>
+					   
+					   <br><br>
+					   
+							<div class="selectProject" >
+								<table width="100%" cellpadding="5" cellspacing="0" border="1"
+			                        align="left" 
+			                        style="border-collapse: collapse; border: 10px #50bcdf; ">
+			                        <tr style="border: 10px; border-color: blue">
+			                           <td width="20" height="25" style="font-size: 120%">&nbsp;&nbsp;</td>
+			
+			                           <td width="220" height="25" style="font-size: 150%; font-weight: bold;">프로젝트 조회</td>
+			                           <td width="30" height="25" style="font-size: 100%"></td>
+			                           <td width="40" height="25" style="font-size: 100%">지역&nbsp;</td><td><select id="areaall" name="areaall">	</select></td>          
+			                           <td width="30" height="25" style="font-size: 100%"></td>
+			                           <td width="40" height="25" style="font-size: 100%">직무&nbsp;</td><td><select id="joball" name="joball">	</select></td>          
+			                           <td width="30" height="25" style="font-size: 100%"></td>
+			                           <td width="40" height="25" style="font-size: 100%">산업&nbsp;</td><td><select id="industryall" name="industryall">	</select></td>          
+			                            
+			                           <td width="180" height="25" style="font-size: 120%">&nbsp;&nbsp;</td>        
+			                           <td width="100" height="60" style="font-size: 120%">
+			                           <a href="" class="btnType blue" id="searchBtn" name="btn"><span>검  색</span></a></td> 
+			                           <td width="20" height="25" style="font-size: 120%">&nbsp;&nbsp;</td>        
+			                        </tr>
+			                     </table>    
+							</div>
+				
+						<div class="divListProject">
 							<table class="col">
 								<caption>caption</caption>
 								<colgroup>
-								   <col width="5%">
-									<col width="70%">
 									<col width="10%">
-									<col width="5%">
+									<col width="8%">
+									<col width="10%">
+									<col width="10%">
+									<col width="10%">
+									<col width="10%">
+									<col width="10%">
 								</colgroup>
 	
 								<thead>
 									<tr>
-									    <th scope="col">번호</th>
-										<th scope="col">제목</th>
+										<th scope="col">회사명</th>
+										<th scope="col">지역</th>
+										<th scope="col">직무</th>
+										<th scope="col">산업</th>
 										<th scope="col">작성일</th>
-										<th scope="col">작성자</th>
+										<th scope="col">모집마감일</th>
+										<th scope="col">작성 회사</th>
 									</tr>
 								</thead>
-								<tbody id="listInf">
+								<tbody id="listProject">
+									<tr>
+										<td colspan="12">조건에 맞는 프로젝트 목록이 조회됩니다.</td>
+									</tr>
 								</tbody>
 							</table>
 						</div>
-										   
-					   <div class="paging_area"  id="listInfPagination"> </div>
-					   
+						
+						<div class="paging_area"  id="listProjectPagination"> </div>
+						
+				
 					</div> <!--// content -->
 
 					</li>
@@ -225,9 +326,11 @@ click-able rows
 		</div>
 	</div>
 					
-					<div id="infModal" class="layerPop layerType2" style="width: 900px;">
+
 				
-						
+				
+		<div id="infModal" class="layerPop layerType2" style="width: 900px;">
+								
 		<dl>
 			<dt>
 				<strong>1:1문의</strong>
@@ -270,6 +373,53 @@ click-able rows
 				</div>
 		</dl>
 		</div>
+		
+		
+	<!-- 모달팝업 -->
+	<div id="notice" class="layerPop layerType2" style="width: 600px;">
+		<input type="hidden" id="noticeNo" name="noticeNo" value="${noticeNo}"> <!-- 수정시 필요한 num 값을 넘김  -->
+		
+		<dl>
+			<dt>
+				<strong>공지사항</strong>
+			</dt>
+			<dd class="content">
+				<!-- s : 여기에 내용입력 -->
+				<table class="row">
+					<caption>caption</caption>
+
+					<tbody>
+						<tr>
+							<th scope="row">작성자 <span class="font_red">*</span></th>
+							<td><input type="text" class="inputTxt p100" name="loginId" id="loginId" /></td>
+							<!-- <th scope="row">작성일<span class="font_red">*</span></th>
+							<td><input type="text" class="inputTxt p100" name="write_date" id="write_date" /></td> -->
+						</tr>
+						<tr>
+							<th scope="row">제목 <span class="font_red">*</span></th>
+							<td colspan="3"><input type="text" class="inputTxt p100"
+								name="noticeTitle" id="noticeTitle" /></td>
+						</tr>
+						<tr>
+							<th scope="row">내용</th>
+							<td colspan="3">
+								<textarea class="inputTxt p100" name="noticeContent" id="noticeContent">
+								</textarea>
+							</td>
+						</tr>
+						
+					</tbody>
+				</table>
+
+				<!-- e : 여기에 내용입력 -->
+
+				<div class="btn_areaC mt30">
+					<a href=""	class="btnType gray"  id="btnClose" name="btn"><span>닫기</span></a>
+				</div>
+			</dd>
+
+		</dl>
+	</div>
                         <!-- 꾸밀수 있는 거 2 -->
                <!--          <div>
 	                        <template id="searcharea2">
