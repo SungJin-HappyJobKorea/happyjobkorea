@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.happyjob.study.info.dao.ProjectDao">
+<!--   프로젝트 목록 조회 -->
+
+<select id="selectProjectList" parameterType="Map" resultType="kr.happyjob.study.info.model.ProjectInfoModel">
+	SELECT pl.pro_no as pro_no
+	  ,pl.loginID as login_ID
+      ,ui.name as user_company
+      ,pl.pro_areacd as pro_area_cd
+      ,pl.pro_areadetail as pro_area_detail
+      ,ll.detail_name as areaname 
+      ,pl.pro_jobcd as pro_job_cd
+      ,pl.pro_jobdetail as pro_job_detail
+      ,ll2.detail_name as jobname
+      ,pl.pro_industrycd as pro_industry_cd
+      ,pl.pro_industrydetail as pro_industry_detail
+      ,ll3.detail_name as industryname
+      ,pl.pro_appstart as pro_appstart
+      ,pl.pro_append as pro_append
+      ,pl.pro_company as pro_company
+  from tb_prolist pl
+      inner join tb_userinfo ui on ui.loginID = pl.loginID
+      inner join ( 
+                   select group_code
+                         ,detail_code
+                         ,detail_name   
+                     from tb_detail_code 
+                 ) ll on ll.group_code = pl.pro_areacd and ll.detail_code = pl.pro_areadetail
+      inner join ( 
+                   select group_code
+                         ,detail_code
+                         ,detail_name   
+                     from tb_detail_code 
+                 ) ll2 on ll2.group_code = pl.pro_jobcd and ll2.detail_code = pl.pro_jobdetail
+      inner join ( 
+                   select group_code
+                         ,detail_code
+                         ,detail_name   
+                     from tb_detail_code 
+                 ) ll3 on ll3.group_code = pl.pro_industrycd and ll3.detail_code = pl.pro_industrydetail                 
+                 
+</select>
+  
+<!-- 프로젝트 상세 조회  -->
+<!-- 신규 프로젝트 등록 -->
+<insert id="insertProjectInfo">
+ 	<selectKey resultType="string" keyProperty="pro_no" order="BEFORE">
+          SELECT IFNULL(MAX(CAST(pro_no AS UNSIGNED)),0) + 1 FROM tb_prolist
+    </selectKey> 
+	INSERT INTO tb_prolist
+	(
+		 pro_no
+		,pro_company
+		,pro_area
+		,pro_
+		
+	)
+	
+</insert>
+</mapper>
